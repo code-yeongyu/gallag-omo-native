@@ -1,10 +1,158 @@
-/* placeholder — full cabinet styling lands with DESIGN.md tokens */
+/* GALLAG arcade cabinet — tokens from DESIGN.md */
+:root {
+  --room: #05060a;
+  --cabinet: #161822;
+  --cabinet-edge: #0b0c12;
+  --marquee-glow: #4df3ff;
+  --marquee-hot: #ff3b30;
+  --panel-text: #8a8f9e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 html,
 body {
   margin: 0;
-  background: #05060a;
+  min-height: 100%;
+  background: radial-gradient(ellipse 120% 90% at 50% 0%, #101322 0%, var(--room) 60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Courier New", ui-monospace, monospace;
+  overflow: hidden;
 }
-canvas {
+
+.cabinet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 18px 26px 14px;
+  background: linear-gradient(180deg, #1d2030 0%, var(--cabinet) 30%, #101218 100%);
+  border-radius: 22px;
+  border: 3px solid var(--cabinet-edge);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.marquee {
+  font-size: clamp(28px, 6vh, 44px);
+  font-weight: 900;
+  letter-spacing: 0.35em;
+  padding: 6px 30px 10px;
+  margin-bottom: 14px;
+  color: var(--marquee-glow);
+  text-shadow:
+    0 0 8px var(--marquee-glow),
+    0 0 24px rgba(77, 243, 255, 0.55),
+    3px 3px 0 var(--marquee-hot),
+    3px 3px 12px rgba(255, 59, 48, 0.6);
+  background: linear-gradient(180deg, #0a0c14, #05070c);
+  border-radius: 10px;
+  border: 2px solid #262a3d;
+  user-select: none;
+}
+
+.bezel {
+  padding: 14px;
+  background: linear-gradient(180deg, #05060a, #0a0b12);
+  border-radius: 18px;
+  border: 2px solid #1f2230;
+  box-shadow:
+    inset 0 2px 12px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.screen-wrap {
+  position: relative;
+  border-radius: 16px / 20px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.75),
+    inset 0 0 6px rgba(0, 0, 0, 0.9);
+}
+
+#game {
   display: block;
+  height: min(72vh, 640px);
+  aspect-ratio: 224 / 288;
   image-rendering: pixelated;
+  background: #000;
+  border-radius: 16px / 20px;
+  transform: perspective(900px) rotateX(0.4deg);
+}
+
+.crt-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 16px / 20px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 0, 0, 0.22) 3px
+    ),
+    repeating-linear-gradient(
+      to right,
+      rgba(255, 0, 60, 0.03) 0px,
+      rgba(0, 255, 120, 0.02) 1px,
+      rgba(0, 60, 255, 0.03) 2px
+    ),
+    radial-gradient(ellipse 105% 105% at 50% 50%, transparent 62%, rgba(0, 0, 0, 0.42) 100%);
+  animation: crt-flicker 4.2s infinite;
+}
+
+@keyframes crt-flicker {
+  0%,
+  100% {
+    opacity: 0.94;
+  }
+  48% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  52% {
+    opacity: 1;
+  }
+}
+
+.panel {
+  display: flex;
+  gap: 28px;
+  margin-top: 12px;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--panel-text);
+  text-shadow: 0 0 6px rgba(138, 143, 158, 0.5);
+  user-select: none;
+}
+
+.coin-label::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: #ffd24d;
+  box-shadow: 0 0 8px #ffd24d;
+  vertical-align: middle;
+  animation: coin-slot 1.6s infinite;
+}
+
+@keyframes coin-slot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }

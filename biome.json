@@ -54,5 +54,8 @@
         }
       }
     }
-  ]
+  ],
+  "files": {
+    "includes": ["**", "!dist", "!node_modules", "!.omo"]
+  }
 }

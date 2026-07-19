@@ -22,6 +22,7 @@ export type Enemy = {
   readonly delayMs: number
   readonly dive: DivePath | null
   readonly hitFlashUntilMs: number
+  readonly hp: number
 }
 
 export type Formation = {
@@ -61,6 +62,7 @@ export const createFormation = (specs: readonly EnemySpec[], _stage: number): Fo
       delayMs: spec.entrance * ENTRANCE_STAGGER_MS,
       dive: null,
       hitFlashUntilMs: 0,
+      hp: spec.kind === "boss" ? 2 : 1,
     }
   }),
   swayPhase: 0,
