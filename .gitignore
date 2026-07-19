@@ -3,3 +3,4 @@ dist/
 .omo/evidence/
 *.local
 .DS_Store
+.omo/senpi-task/
