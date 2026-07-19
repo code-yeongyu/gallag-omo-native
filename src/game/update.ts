@@ -33,6 +33,7 @@ const resetForAttract = (game: Game): Game => ({
   phase: { kind: "attract" },
   player: { ...game.player, x: PLAYER.startX },
   formation: createFormation(stageLayout(1), 1),
+  drops: [],
   score: { score: 0, popups: [] },
   stage: 1,
   credits: game.credits,

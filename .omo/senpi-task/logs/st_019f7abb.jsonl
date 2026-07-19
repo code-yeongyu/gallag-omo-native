@@ -1,0 +1,47 @@
+{"type":"transition_applied","payload":{"type":"transition_applied","status":"running","residency_state":"resident"}}
+{"type":"assistant_message","payload":{"text":"I read this as a read-only ship/no-ship review of the GALLAG arcade build — I'll examine all 14 captures, the design contract, and key source files, verify the two claimed fixes, then hunt independently.\n\nLet me start by pulling in all the evidence in parallel."}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"assistant_message","payload":{"text":"Good start — captures 01-07 and DESIGN.md are in. Now the remaining captures and source files."}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"assistant_message","payload":{"text":"All 14 captures reviewed. Now the source files to ground my observations."}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"assistant_message","payload":{"text":"Now the remaining source files — update, playing, font, sfx, style.css, and the items/HUD modules."}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"assistant_message","payload":{"text":"Now the remaining pieces: font.ts, hud.ts, items.ts, particles.ts, and config.ts to verify tokens."}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"assistant_message","payload":{"text":"Let me check config.ts for the token values and the state.ts for phase structure, plus the index.html for the cabinet DOM."}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"bash","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"assistant_message","payload":{"text":"I have everything I need. Let me now do close pixel-level verification of the two claimed fixes and hunt for residual issues. Key things to verify:\n\n1. **Debris claim**: captures 01/02 (attract) and 13 (enter-name) — check for frozen enemy formation overlap.\n2. **Credit counter claim**: capture 01/02 (attract, no coin) vs 03 (after coin).\n\nLet me re-examine the relevant captures at full resolution by cropping regions of interest."}}
+{"type":"tool_execution","payload":{"tool":"bash","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"bash","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"assistant_message","payload":{"text":"Both claimed fixes verified at pixel level:\n\n1. **Debris fix — VERIFIED on attract (01)**: clean black starfield, no frozen formation. But on **13-enter-name there IS a leftover pink \"B\" bonus capsule** floating mid-left (around y≈1080 in crop) AND a **red/yellow boss sprite parked at bottom-right** next to CREDIT 0. Wait — the boss at bottom-right is the stage-badge row from the HUD (drawHud draws bossA badges at bottom-right). That's legitimate. But the pink \"B\" capsule is a leftover item drop from the previous game — `resetForAttract` clears formation/score but does NOT clear `drops`. Actually wait — enterName phase comes BEFORE resetForAttract. Let me check: gameOver → enterName keeps the battlefield? No — `battlefieldVisible = phase !== \"attract\" && phase !== \"enterName\"`, so enemies are hidden in enterName, but `drawDrops` is called unconditionally. The drop from the final gameplay frame persists through gameOver → enterName → and even into attract (resetForAttract doesn't clear drops either!).\n\nLet me verify capture 12 (game over) and 14 for the same capsule, and check 02/03 crops."}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"tool_execution","payload":{"tool":"read","is_error":false}}
+{"type":"assistant_message","payload":{"text":"Confirmed — this is a real, evidence-grounded bug, and it's arguably worse than the one they fixed:\n\n**The pink \"B\" bonus capsule from the last gameplay frame leaks through GAME OVER (12) → ENTER NAME (13) → and onto the fresh ATTRACT screen (14).** In 14 it's sitting at the left edge overlapping the high-score table area (next to \"5. LAG\"). Root cause in source:\n\n- `drawGame` calls `drawDrops(ctx, game)` unconditionally — not gated by `battlefieldVisible`.\n- `resetForAttract` (update.ts) resets formation/score/stage but does **not** clear `drops`.\n- `startStage` clears drops, but the gameOver → enterName → attract path never goes through startStage.\n\nSo the previous reviewer flagged \"frozen enemy-formation debris\" — they fixed the formation part, but the item-drop debris is still there, visibly, in the fresh captures. This is exactly the class of bug the brief's \"cabinet feel\" cares about: a real 1981 attract mode never shows a floating power-up from the last game over the title screen.\n\n**Credit counter claim — VERIFIED**: 03 shows `CREDIT 1` bottom-right in attract after coin insert; 01/02 correctly show no credit line with 0 credits (period-correct — Galaga shows CREDIT 0, but hiding it at 0 is a defensible choice; actually the original does show \"CREDIT 0\"... let me check the captures again). In 01/02 there is no CREDIT text at all in attract. In 04-13, `CREDIT 0` is shown during play. Minor inconsistency, nit-level.\n\nNow let me check remaining details: the 09-twin-shot capture (twin bullets), 10 shield ring, 11 death explosion, and the \"1 COIN · 1 PLAY\" panel dot. Also verify the 06 capture's popup \"50\" overlap and the dive frame. Let me crop a few more regions."}}
+{"type":"tool_execution","payload":{"tool":"bash","is_error":false}}
+{"type":"transition_applied","payload":{"type":"transition_applied","status":"completed","residency_state":"resident"}}

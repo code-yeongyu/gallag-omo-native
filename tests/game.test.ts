@@ -78,6 +78,7 @@ describe("game phase machine", () => {
     g = {
       ...g,
       formation: played,
+      drops: [{ x: 50, y: 50, kind: "bonus" }],
       phase: { kind: "enterName", name: "LO ", cursor: 2 },
       score: { score: 99999, popups: [] },
     }
@@ -91,6 +92,7 @@ describe("game phase machine", () => {
       const offscreen = enemy.x < 0 || enemy.x > 224
       expect(offscreen, `enemy ${enemy.id} must start offscreen in attract`).toBe(true)
     }
+    expect(r.game.drops, "item drops must not leak into attract").toHaveLength(0)
   })
 
   it("playing updates move the player with input", () => {
