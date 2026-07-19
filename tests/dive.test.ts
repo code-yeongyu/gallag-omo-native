@@ -28,12 +28,10 @@ describe("dive", () => {
     if (!picked) throw new Error("diver fixture missing")
     let enemy = startDive(picked, 112)
     expect(enemy.state).toBe("diving")
-    let fired = 0
     let steps = 0
     while (enemy.state !== "formation" && steps < 3000) {
       const result = updateDiving(enemy, 16, 112, 288, createRng(steps + 1))
       enemy = result.enemy
-      if (result.fired) fired++
       steps++
     }
     expect(enemy.state).toBe("formation")

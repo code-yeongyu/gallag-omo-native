@@ -93,7 +93,8 @@ const updateEnteringChallenge = (enemy: Enemy): Enemy => {
 export const updateFormation = (formation: Formation, dtMs: number): Formation => {
   const swayPhase =
     formation.swayPhase + (((dtMs / 1000) * FORMATION.swaySpeed * Math.PI) % (Math.PI * 2))
-  const enemies = formation.enemies.map((enemy) => {
+  // biome-ignore lint/suspicious/useIterableCallbackReturn: switch is exhaustive over EnemyState (proven by tsc strict null narrowing)
+  const enemies = formation.enemies.map((enemy): Enemy => {
     switch (enemy.state) {
       case "entering": {
         if (enemy.delayMs > 0) return { ...enemy, delayMs: enemy.delayMs - dtMs }
