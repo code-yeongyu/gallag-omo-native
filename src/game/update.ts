@@ -1,6 +1,7 @@
 import type { SfxName } from "../audio/sfx"
 import { PLAYER, SCREEN, TIMING } from "../config"
-import { updateFormation } from "../enemies/formation"
+import { createFormation, updateFormation } from "../enemies/formation"
+import { stageLayout } from "../enemies/waves"
 import { updateParticles } from "../render/particles"
 import { updateStarfield } from "../render/starfield"
 import type { Rng } from "../rng"
@@ -31,6 +32,7 @@ const resetForAttract = (game: Game): Game => ({
   ...game,
   phase: { kind: "attract" },
   player: { ...game.player, x: PLAYER.startX },
+  formation: createFormation(stageLayout(1), 1),
   score: { score: 0, popups: [] },
   stage: 1,
   credits: game.credits,

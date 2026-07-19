@@ -113,6 +113,7 @@ const drawAttract = (ctx: CanvasRenderingContext2D, game: Game): void => {
     drawText(ctx, `= ${points} PTS`, 88, y + 1, "#f2f2f2")
   })
   if (game.credits > 0) {
+    drawText(ctx, `CREDIT ${game.credits}`, SCREEN.width - 52, SCREEN.height - 9, "#8a8f9e")
     if (blinking(now))
       drawTextCentered(ctx, "PRESS ENTER TO START", SCREEN.width / 2, 234, "#f2f2f2")
   } else if (blinking(now)) {
@@ -172,8 +173,11 @@ export const drawGame = (ctx: CanvasRenderingContext2D, game: Game): void => {
     )
   }
   drawStarfield(ctx, game.starfield)
-  for (const enemy of game.formation.enemies) {
-    if (enemy.state !== "gone") drawEnemy(ctx, enemy, game.nowMs)
+  const battlefieldVisible = game.phase.kind !== "attract" && game.phase.kind !== "enterName"
+  if (battlefieldVisible) {
+    for (const enemy of game.formation.enemies) {
+      if (enemy.state !== "gone") drawEnemy(ctx, enemy, game.nowMs)
+    }
   }
   drawDrops(ctx, game)
   drawBullets(ctx, game)
