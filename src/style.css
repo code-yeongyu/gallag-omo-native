@@ -1,0 +1,10 @@
+/* placeholder — full cabinet styling lands with DESIGN.md tokens */
+html,
+body {
+  margin: 0;
+  background: #05060a;
+}
+canvas {
+  display: block;
+  image-rendering: pixelated;
+}
