@@ -103,6 +103,9 @@ const qa: GallagQa = {
       bullets: { shots: [{ x: game.player.x, y: game.player.y, vy: 0, friendly: false }] },
     }
   },
+  setInvuln: (ms: number) => {
+    game = { ...game, player: { ...game.player, invulnUntilMs: game.nowMs + ms } }
+  },
   autopilot: (on: boolean) => {
     autopilot = on
   },

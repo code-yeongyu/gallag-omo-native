@@ -29,6 +29,7 @@ export type GallagQa = {
   readonly coin: () => void
   readonly spawnItem: (kind: ItemKind) => void
   readonly killPlayer: () => void
+  readonly setInvuln: (ms: number) => void
   readonly autopilot: (on: boolean) => void
   readonly isAutopilot: () => boolean
   readonly forceGameOver: () => void
